@@ -25,7 +25,19 @@ app.get("/api/hello", function (req, res) {
 });
 
 app.get('/api/:timestamp', function (req, res) {
-  const date = new Date(req.params.timestamp);
+  console.log(`${req.method} ${req.path} - ${req.ip} | ${req.params.timestamp}`);
+  let date = new Date(req.params.timestamp);
+  if(date.toUTCString() === 'Invalid Date') {
+    date = new Date(Number(req.params.timestamp));
+  }
+  if(date.toUTCString() === 'Invalid Date') {
+    return res.json({error: 'Invalid Date'});
+  }
+  res.json({unix: date.getTime(), utc: date.toUTCString()});
+});
+
+app.get('/api', function (req, res) {
+  const date = new Date();
   res.json({unix: date.getTime(), utc: date.toUTCString()});
 });
 
